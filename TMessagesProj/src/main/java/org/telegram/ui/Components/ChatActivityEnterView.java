@@ -94,7 +94,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import org.telegram.messenger.forkgram.PrivacyMode;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -242,6 +242,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     private int commonInputType;
     private boolean stickersEnabled;
     private ActionBarMenuSubItem sendWhenOnlineButton;
+    
     private LinearLayout recordTimeContainer;
     private CharSequence overrideHint;
     private CharSequence overrideHint2;
@@ -6965,6 +6966,25 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     public final ColoredImageSpan[] spans = new ColoredImageSpan[1];
+   public void setPrivacyMode(boolean enabled) {
+    if (messageEditText == null) return;
+    boolean prevIgnore = ignoreTextChange;
+    ignoreTextChange = true;
+    try {
+        boolean encrypted = parentFragment != null && parentFragment.getCurrentEncryptedChat() != null;
+        boolean noLearning = isKeyboardSupportIncognitoMode() && (enabled || encrypted);
+        int ime = messageEditText.getImeOptions();
+        ime = noLearning ? (ime | EditorInfoCompat.IME_FLAG_NO_PERSONALIZED_LEARNING)
+                         : (ime & ~EditorInfoCompat.IME_FLAG_NO_PERSONALIZED_LEARNING);
+        messageEditText.setImeOptions(ime);
+        commonInputType = enabled ? (commonInputType | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS)
+                                  : (commonInputType & ~EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        messageEditText.setInputType(commonInputType);
+        messageEditText.setPrivacyMasked(enabled);
+    } finally {
+        ignoreTextChange = prevIgnore;
+    }
+}
     public void updateFieldHint(boolean animated) {
         if (messageEditText == null) {
             return;

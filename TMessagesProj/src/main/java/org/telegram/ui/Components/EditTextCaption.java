@@ -149,7 +149,19 @@ public class EditTextCaption extends EditTextBoldCursor implements FloatingToolb
     public boolean getAllowTextEntitiesIntersection() {
         return allowTextEntitiesIntersection;
     }
+private boolean privacyMasked;
 
+public boolean isPrivacyMasked() {
+    return privacyMasked;
+}
+
+public void setPrivacyMasked(boolean masked) {
+    if (privacyMasked == masked) return;
+    privacyMasked = masked;
+    final int s = getSelectionStart(), e = getSelectionEnd();
+    setTransformationMethod(masked ? PrivacyTransformationMethod.INSTANCE : null);
+    if (s >= 0 && e >= 0 && e <= length()) setSelection(s, e);
+}
     public void makeSelectedBold() {
         TextStyleSpan.TextStyleRun run = new TextStyleSpan.TextStyleRun();
         run.flags |= TextStyleSpan.FLAG_STYLE_BOLD;

@@ -14,7 +14,7 @@ import static org.telegram.messenger.LocaleController.formatPluralStringComma;
 import static org.telegram.messenger.LocaleController.formatString;
 import static org.telegram.messenger.LocaleController.getString;
 import static org.telegram.ui.bots.AffiliateProgramFragment.percents;
-
+import org.telegram.messenger.forkgram.PrivacyMode;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -525,6 +525,7 @@ public class ChatActivity extends BaseFragment implements
     private ChatActivitySideControlsButtonsLayout sideControlsButtonsLayout;
     private boolean pagedownButtonShowedByScroll;
     private ActionBarMenuSubItem hideTitleItem;
+       private ActionBarMenuSubItem privacyModeItem;
     private int reactionsMentionCount;
     private int pollVotesMentionCount;
     public Bulletin messageSeenPrivacyBulletin;
@@ -1844,6 +1845,7 @@ public class ChatActivity extends BaseFragment implements
     private final static int call = 32;
     private final static int video_call = 33;
     private final static int hideTitle = 34;
+       private final static int privacyMode = 90;
     private final static int goToFirstMessage = 35;
     private final static int deleteAllYourMessages = 36;
     private final static int deleteAllUnpinnedMessages = 37;
@@ -4409,6 +4411,8 @@ public class ChatActivity extends BaseFragment implements
 
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                     preferences.edit().putBoolean("hideTitle", SharedConfig.hideTitleDialog).commit();
+                       } else if (id == privacyMode) {
+       applyPrivacyMode(PrivacyMode.toggle(dialog_id));
                 } else if (id == goToFirstMessage) {
                     // This is timestamp of launch date of the Telegram.
                     // August 2013.
@@ -4854,7 +4858,8 @@ public class ChatActivity extends BaseFragment implements
                 hideTitleString = LocaleController.getString("HideTitle", R.string.HideTitle);
             }
             hideTitleItem = headerItem.addSubItem(hideTitle, R.drawable.hide_title, hideTitleString, themeDelegate);
-
+   privacyModeItem = headerItem.addSubItem(privacyMode, R.drawable.hide_title,
+       getString(PrivacyMode.isEnabled(dialog_id) ? R.string.PrivacyModeOff : R.string.PrivacyModeOn), themeDelegate);
 
             headerItem.addSubItem(goToFirstMessage, R.drawable.to_first, LocaleController.getString("GoToFirstMessage", R.string.GoToFirstMessage), themeDelegate);
 
@@ -31046,7 +31051,12 @@ public class ChatActivity extends BaseFragment implements
     }
 
     Bulletin.Delegate bulletinDelegate;
-
+   private void applyPrivacyMode(boolean on) {
+       if (chatActivityEnterView != null) chatActivityEnterView.setPrivacyMode(on);
+       if (privacyModeItem != null) {
+           privacyModeItem.setText(getString(on ? R.string.PrivacyModeOff : R.string.PrivacyModeOn));
+       }
+   }
     @Override
     public void onResume() {
         super.onResume();

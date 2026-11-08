@@ -63,6 +63,9 @@
     <string name="DateForward">Date</string>
     <string name="ShowTitle">Show title</string>
     <string name="HideTitle">Hide title</string>
+    <string name="PrivacyModeOn">Privacy mode</string>
+    <string name="PrivacyModeOff">Turn off privacy mode</string>
+    <string name="PrivateChatName">Private chat</string>
     <string name="RemoveFromHideMode">Remove from Hide Mode</string>
     <string name="AddToHideMode">Add to Hide Mode</string>
     <string name="PinOrderInfo">You can manage local order of pinned dialogs right here.</string>

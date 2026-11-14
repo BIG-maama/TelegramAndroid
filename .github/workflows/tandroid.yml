@@ -42,6 +42,14 @@ jobs:
           echo "ADDITIONAL_BUILD_NUMBER=$result" >> $GITHUB_ENV
           echo "USER_REPO=$GITHUB_REPOSITORY" >> $GITHUB_ENV
           echo "CHECK_UPDATES=1" >> $GITHUB_ENV
+      - name: Generate a fresh signing keystore.
+        run: |
+          rm -f TMessagesProj/config/release.keystore
+          keytool -genkeypair -v \
+            -keystore TMessagesProj/config/release.keystore \
+            -storepass android -keypass android \
+            -alias androidkey -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Fork Client Test, O=Test, C=US"
       - name: Build.
         run: |
           ###
